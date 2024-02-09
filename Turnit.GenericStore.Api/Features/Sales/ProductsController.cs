@@ -4,11 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate;
-using Turnit.GenericStore.Api.Entities;
+using NHibernate.Criterion;
+using NHibernate.Linq.Visitors;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
+using Turnit.GenericStore.Api.Domain.Entities;
 
 namespace Turnit.GenericStore.Api.Features.Sales;
 
-[Route("products")]
+[Route("[controller]")]
 public class ProductsController : ApiControllerBase
 {
     private readonly ISession _session;
@@ -17,6 +21,7 @@ public class ProductsController : ApiControllerBase
     {
         _session = session;
     }
+    
     
     [HttpGet, Route("by-category/{categoryId:guid}")]
     public async Task<ProductModel[]> ProductsByCategory(Guid categoryId)
@@ -50,13 +55,19 @@ public class ProductsController : ApiControllerBase
         return result.ToArray();
     }
     
+    
     [HttpGet, Route("")]
-    public async Task<ProductCategoryModel[]> AllProducts()
+    public async Task<List<ProductCategoryModel>> AllProducts()
     {
-        var products = await _session.QueryOver<Product>().ListAsync<Product>();
-        var productCategories = await _session.QueryOver<ProductCategory>().ListAsync();
-
+        
+        var products = await _session.QueryOver<Product>()
+            .ListAsync();
+        
+        var productCategories = await _session.QueryOver<ProductCategory>()
+            .ListAsync();
+            
         var productModels = new List<ProductModel>();
+        
         foreach (var product in products)
         {
             var availability = await _session.QueryOver<ProductAvailability>()
@@ -90,14 +101,21 @@ public class ProductsController : ApiControllerBase
         }
 
         var uncategorizedProducts = productModels.Except(result.SelectMany(x => x.Products));
-        if (uncategorizedProducts.Any())
+        var enumerable = uncategorizedProducts.ToList();
+        if (enumerable.Any())
         {
             result.Add(new ProductCategoryModel
             {
-                Products = uncategorizedProducts.ToArray()
+                Products = enumerable.ToArray()
             });
         }
         
-        return result.ToArray();
+        return result;
     }
+}
+
+public class ProductBookingRequestModel
+{
+    public int Quantity { get; set; }
+    public Guid StoreId { get; set; }
 }

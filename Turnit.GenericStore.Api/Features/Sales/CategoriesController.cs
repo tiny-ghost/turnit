@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate;
-using Turnit.GenericStore.Api.Entities;
+using Turnit.GenericStore.Api.Domain.Entities;
 
 namespace Turnit.GenericStore.Api.Features.Sales;
 

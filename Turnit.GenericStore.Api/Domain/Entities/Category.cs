@@ -1,21 +1,21 @@
 using System;
 using FluentNHibernate.Mapping;
 
-namespace Turnit.GenericStore.Api.Entities;
+namespace Turnit.GenericStore.Api.Domain.Entities;
 
-public class Store
+public class Category
 {
     public virtual Guid Id { get; set; }
 
     public virtual string Name { get; set; }
 }
 
-public class StoreMap : ClassMap<Store>
+public class CategoryMap : ClassMap<Category>
 {
-    public StoreMap()
+    public CategoryMap()
     {
         Schema("public");
-        Table("product");
+        Table("category");
 
         Id(x => x.Id, "id");
         Map(x => x.Name, "name");

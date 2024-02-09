@@ -1,14 +1,8 @@
-using System;
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
+using Turnit.GenericStore.Domain.Entities;
 
-namespace Turnit.GenericStore.Api.Entities;
-
-public class Category
+namespace Turnit.GenericStore.Infrastructure.Mapping
 {
-    public virtual Guid Id { get; set; }
-
-    public virtual string Name { get; set; }
-}
 
 public class CategoryMap : ClassMap<Category>
 {
@@ -20,4 +14,5 @@ public class CategoryMap : ClassMap<Category>
         Id(x => x.Id, "id");
         Map(x => x.Name, "name");
     }
+}
 }

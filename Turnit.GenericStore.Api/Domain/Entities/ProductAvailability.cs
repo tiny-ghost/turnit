@@ -1,7 +1,7 @@
 using System;
 using FluentNHibernate.Mapping;
 
-namespace Turnit.GenericStore.Api.Entities;
+namespace Turnit.GenericStore.Api.Domain.Entities;
 
 public class ProductAvailability
 {
@@ -23,7 +23,7 @@ public class ProductAvailabilityMap : ClassMap<ProductAvailability>
 
         Id(x => x.Id, "id");
         Map(x => x.Availability, "availability");
-        References(x => x.Store, "store_id");
-        References(x => x.Product, "product_id");
+        References(x => x.Store, "store_id").Fetch.Join();
+        References(x => x.Product, "product_id").Fetch.Join();
     }
 }

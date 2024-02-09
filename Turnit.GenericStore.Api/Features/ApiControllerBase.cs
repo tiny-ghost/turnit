@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using NHibernate;
 
 namespace Turnit.GenericStore.Api.Features;
 
@@ -6,5 +7,5 @@ namespace Turnit.GenericStore.Api.Features;
 [Produces("application/json")]
 public abstract class ApiControllerBase : ControllerBase
 {
-    
+	
 }

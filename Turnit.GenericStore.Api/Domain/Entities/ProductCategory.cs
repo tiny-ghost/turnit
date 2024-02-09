@@ -1,7 +1,7 @@
 using System;
 using FluentNHibernate.Mapping;
 
-namespace Turnit.GenericStore.Api.Entities;
+namespace Turnit.GenericStore.Api.Domain.Entities;
 
 public class ProductCategory
 {

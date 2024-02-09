@@ -25,8 +25,8 @@ namespace Turnit.GenericStore.Api
         {
             services.AddControllers();
 
-            services.AddScoped(CreateSessionFactory);
-            services.AddScoped<ISession>(sp => sp.GetRequiredService<ISessionFactory>().OpenSession());
+            services.AddSingleton(CreateSessionFactory);
+            services.AddScoped(sp => sp.GetRequiredService<ISessionFactory>().OpenSession());
             
             services.AddSwaggerGen(x => x.SwaggerDoc("v1", new OpenApiInfo
             {
