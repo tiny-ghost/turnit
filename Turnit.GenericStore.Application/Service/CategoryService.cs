@@ -21,8 +21,6 @@ namespace Turnit.GenericStore.Application.Service
 			return await _session.QueryOver<Category>().ListAsync();
 		}
 		
-		//This should be probably Post as we actually creating new record and deleting new record.
-		//will be used by Category controller
 		public async Task AddProductToCategory(Guid productId,  Guid categoryId)
 		{
 			var product =  await _session.GetAsync<Product>(productId);
@@ -52,8 +50,6 @@ namespace Turnit.GenericStore.Application.Service
 			await SaveAsync(newProductCategory);
 		}
 
-		//This should be probably Post as we actually creating new record and deleting new record.
-		//will be used by Category controller
 		public async Task RemoveProductFromCategory(Guid productId, Guid categoryId)
 		{
 			var existingProductCategory = await _session.QueryOver<ProductCategory>()
