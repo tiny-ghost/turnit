@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using Turnit.GenericStore.Domain.Entities;
+using Turnit.GenericStore.Domain.Entity;
 
 namespace Turnit.GenericStore.Infrastructure.Mapping
 {

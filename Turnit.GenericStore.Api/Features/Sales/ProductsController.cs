@@ -2,120 +2,55 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NHibernate;
-using NHibernate.Criterion;
-using NHibernate.Linq.Visitors;
-using NHibernate.SqlCommand;
-using NHibernate.Transform;
-using Turnit.GenericStore.Api.Domain.Entities;
+using Turnit.GenericStore.Domain.Interface.Service;
+using Turnit.GenericStore.Domain.Models.Product;
 
 namespace Turnit.GenericStore.Api.Features.Sales;
 
 [Route("[controller]")]
 public class ProductsController : ApiControllerBase
 {
-    private readonly ISession _session;
+	private readonly IProductService _productService;
 
-    public ProductsController(ISession session)
-    {
-        _session = session;
-    }
-    
-    
-    [HttpGet, Route("by-category/{categoryId:guid}")]
-    public async Task<ProductModel[]> ProductsByCategory(Guid categoryId)
-    {
-        var products = await _session.QueryOver<ProductCategory>()
-            .Where(x => x.Category.Id == categoryId)
-            .Select(x => x.Product)
-            .ListAsync<Product>();
+	public ProductsController(IProductService productService)
+	{
+		_productService = productService;
+	}
 
-        var result = new List<ProductModel>();
 
-        foreach (var product in products)
-        {
-            var availability = await _session.QueryOver<ProductAvailability>()
-                .Where(x => x.Product.Id == product.Id)
-                .ListAsync();
-            
-            var model = new ProductModel
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Availability = availability.Select(x => new ProductModel.AvailabilityModel
-                {
-                    StoreId = x.Store.Id,
-                    Availability = x.Availability
-                }).ToArray()
-            };
-            result.Add(model);
-        }
-        
-        return result.ToArray();
-    }
-    
-    
-    [HttpGet, Route("")]
-    public async Task<List<ProductCategoryModel>> AllProducts()
-    {
-        
-        var products = await _session.QueryOver<Product>()
-            .ListAsync();
-        
-        var productCategories = await _session.QueryOver<ProductCategory>()
-            .ListAsync();
-            
-        var productModels = new List<ProductModel>();
-        
-        foreach (var product in products)
-        {
-            var availability = await _session.QueryOver<ProductAvailability>()
-                .Where(x => x.Product.Id == product.Id)
-                .ListAsync();
-            
-            var model = new ProductModel
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Availability = availability.Select(x => new ProductModel.AvailabilityModel
-                {
-                    StoreId = x.Store.Id,
-                    Availability = x.Availability
-                }).ToArray()
-            };
-            productModels.Add(model);
-        }
-        
-        var result = new List<ProductCategoryModel>();
-        foreach (var category in productCategories.GroupBy(x => x.Category.Id))
-        {
-            var productIds = category.Select(x => x.Product.Id).ToHashSet();
-            result.Add(new ProductCategoryModel
-            {
-                CategoryId = category.Key,
-                Products = productModels
-                    .Where(x => productIds.Contains(x.Id))
-                    .ToArray()
-            });
-        }
+	[HttpGet]
+	[Route("by-category/{categoryId:guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult<List<ProductModel>>> ProductsByCategory(Guid categoryId)
+	{
+		var result = await _productService.GetProductsByCategory(categoryId);
 
-        var uncategorizedProducts = productModels.Except(result.SelectMany(x => x.Products));
-        var enumerable = uncategorizedProducts.ToList();
-        if (enumerable.Any())
-        {
-            result.Add(new ProductCategoryModel
-            {
-                Products = enumerable.ToArray()
-            });
-        }
-        
-        return result;
-    }
-}
+		if (!result.Any())
+		{
+			return NotFound();
+		}
+		
+		return Ok(result);
+	}
 
-public class ProductBookingRequestModel
-{
-    public int Quantity { get; set; }
-    public Guid StoreId { get; set; }
+
+	[HttpGet]
+	[Route("")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult<List<ProductCategoryModel>>> AllProducts()
+	{
+		var result = await _productService.GetAllProducts();
+
+		if (!result.Any())
+		{
+			return NotFound();
+		}
+
+		return Ok(result);
+	}
+	
 }

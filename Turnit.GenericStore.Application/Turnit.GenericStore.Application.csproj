@@ -5,4 +5,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Turnit.GenericStore.Domain\Turnit.GenericStore.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NHibernate" Version="5.3.3" />
+    </ItemGroup>
+
 </Project>

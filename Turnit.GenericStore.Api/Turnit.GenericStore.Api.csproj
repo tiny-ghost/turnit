@@ -14,9 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Entities\" />
-      <Folder Include="Infrastructure\" />
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\Turnit.GenericStore.Application\Turnit.GenericStore.Application.csproj" />
+      <ProjectReference Include="..\Turnit.GenericStore.Domain\Turnit.GenericStore.Domain.csproj" />
+      <ProjectReference Include="..\Turnit.GenericStore.Infrastructure\Turnit.GenericStore.Infrastructure.csproj" />
     </ItemGroup>
     
 </Project>

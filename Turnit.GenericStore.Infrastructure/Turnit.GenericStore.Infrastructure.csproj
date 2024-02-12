@@ -13,4 +13,8 @@
       <ProjectReference Include="..\Turnit.GenericStore.Domain\Turnit.GenericStore.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Repository\" />
+    </ItemGroup>
+
 </Project>

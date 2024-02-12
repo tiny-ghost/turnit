@@ -1,34 +1,33 @@
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate;
-using Turnit.GenericStore.Api.Domain.Entities;
+using Turnit.GenericStore.Domain.Entity;
+using Turnit.GenericStore.Domain.Interface.Service;
 
 namespace Turnit.GenericStore.Api.Features.Sales;
 
-[Route("categories")]
+[Route("[controller]")]
 public class CategoriesController : ApiControllerBase
 {
-    private readonly ISession _session;
-
-    public CategoriesController(ISession session)
+    private readonly ICategoryService _categoryService;
+    public CategoriesController(ICategoryService categoryService)
     {
-        _session = session;
+        _categoryService = categoryService;
     }
     
     [HttpGet, Route("")]
-    public async Task<CategoryModel[]> AllCategories()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Category>>> AllCategories()
     {
-        var categories = await _session.QueryOver<Category>().ListAsync();
-
-        var result = categories
-            .Select(x => new CategoryModel
-            {
-                Id = x.Id,
-                Name = x.Name
-            })
-            .ToArray();
+        var result = await _categoryService.GetAllCategories();
+        if(result.Count == 0)
+        {
+            return NotFound();
+        }
         
-        return result;
+        return Ok(result);
     }
 }

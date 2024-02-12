@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using NHibernate;
+using Turnit.GenericStore.Application.Service;
+using Turnit.GenericStore.Domain.Interface.Service;
+using Turnit.GenericStore.Infrastructure.Mapping;
 
 namespace Turnit.GenericStore.Api
 {
@@ -26,7 +29,11 @@ namespace Turnit.GenericStore.Api
             services.AddControllers();
 
             services.AddSingleton(CreateSessionFactory);
+            
             services.AddScoped(sp => sp.GetRequiredService<ISessionFactory>().OpenSession());
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IStoreService, StoreService>();
             
             services.AddSwaggerGen(x => x.SwaggerDoc("v1", new OpenApiInfo
             {
@@ -44,7 +51,7 @@ namespace Turnit.GenericStore.Api
                     .ConnectionString(connectionString))
                 .Mappings(x =>
                 {
-                    x.FluentMappings.AddFromAssemblyOf<Startup>();
+                    x.FluentMappings.AddFromAssemblyOf<ProductMap>();
                 });
 
             return configuration.BuildSessionFactory();
@@ -57,8 +64,6 @@ namespace Turnit.GenericStore.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            // app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseSwagger()

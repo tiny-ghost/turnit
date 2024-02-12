@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
-namespace Turnit.GenericStore.Domain.Entities
+namespace Turnit.GenericStore.Domain.Entity
 {
-	public class Store
+	public class Category
 	{
 		public virtual Guid Id { get; set; }
 
